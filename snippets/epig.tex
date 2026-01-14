@@ -17,35 +17,40 @@ For now, we assume that we are simply estimating kernel hyperparamters with
 MLEII, so that we are not in the fully Bayesian setting, but this can be easily
 extended.
 
-The EPIG acquisition function is the given by the mutual information between
-the grid values at the test points and the training points
-\[ 
-    \EPIG(x_T) = I(y; y_T)
-\]
-We expand this expression based on our model with the goal of optimizing over
-the set of training points.
+The EPIG acquisition function is the given by the expected information gain over
+some test distribution for x
 \begin{align}
-    I(y; y_T) &= H(y) + H(y_T) - H(y, y_T) \\
+    \EPIG(x_T) &= \E I(x, y; y_T | x_T) = \E[H[y|x]-H[y|x,x_T,y_T]] \\
+    &= \E[I(y;y_T|x,x_T)]
 \end{align}
-We analyze each term individually. Since $H(y)$ does not depend on the training
-points we can ignore it. Given the training points, $y_T \sim \Norm(0, K_T)$ and
-so $H(y_T) = \log|K_T|$. Note that if we stopped now, we would just have the
-traditional information gain. However, we must now consider how much that
-information tells us about future observations. This requires the computation
-of $H(y, y_T)$. However, this is not as straightforward as for $H(y)$ because
-$(y, y_T)$ is only multivariate normal once conditioned on $x$. However,
-$x$ and $y_T$ are independent the end result is the same
-\begin{align}
-    H(y, y_T) &= H(y, y_T | x) + I(x;y, y_T) \\
-    &= H(y, y_T | x) + I(x;y) \\
-    &= \E\log|K'_T(x)| + C
-\end{align}
-Where we use $K'_T(x)$ to denote the augmented covariance matrix with the point
-$x$ added. Our optimization problem then becomes the problem of optimizing over
-$x_T$ the objective function
-\[ 
-    J(x_T) := \log|K_T| - \E\log|K_T'(x)|
-\]
+Where the exectation involves both randomness in $x$, and in principle in 
+$y_T$. We thus wish to optimizea
+\[ \E \log|K + \sigma^2 I| \] 
+Where $K$ denotes the covariance matrix, which is dependent on the random variable
+$x$. To calculate this value we must take an expectation over $x$ which can be
+done by quadrature or monte carlo.
+% \begin{align}
+%     I(y; y_T) &= H(y) + H(y_T) - H(y, y_T) \\
+% \end{align}
+% We analyze each term individually. Since $H(y)$ does not depend on the training
+% points we can ignore it. Given the training points, $y_T \sim \Norm(0, K_T)$ and
+% so $H(y_T) = \log|K_T|$. Note that if we stopped now, we would just have the
+% traditional information gain. However, we must now consider how much that
+% information tells us about future observations. This requires the computation
+% of $H(y, y_T)$. However, this is not as straightforward as for $H(y)$ because
+% $(y, y_T)$ is only multivariate normal once conditioned on $x$. However,
+% $x$ and $y_T$ are independent the end result is the same
+% \begin{align}
+%     H(y, y_T) &= H(y, y_T | x) + I(x;y, y_T) \\
+%     &= H(y, y_T | x) + I(x;y) \\
+%     &= \E\log|K'_T(x)| + C
+% \end{align}
+% Where we use $K'_T(x)$ to denote the augmented covariance matrix with the point
+% $x$ added. Our optimization problem then becomes the problem of optimizing over
+% $x_T$ the objective function
+% \[ 
+%     J(x_T) := \log|K_T| - \E\log|K_T'(x)|
+% \]
 
 
 \subsection{Extending EPIG}

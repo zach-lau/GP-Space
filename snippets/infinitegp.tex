@@ -1,0 +1,38 @@
+\section{Infinite GPs}
+We first consider a toy example of a densifying grid on the compact domain
+$[0 ,1]$. Consider a number of points $n$ $\left\{0, \frac 1 n, \ldots, \frac{n-1}{n}
+\right\}$ and let $f$ be any lipschitz function. We will analyze the behaviour
+of the log-likelihood as $n \to \infty$. Recall that, up to constants and
+constant factors the negative log marginal likelihood is given by 
+\[ \log|K+\sigma^2 I| + y^T (K+\sigma^2{I})^{-1}y \]
+Where $K$ denotes the covariance matrix and $y$ the vector of observations at
+$0, \frac 1 n$ etc. We will consider the limit of each of these terms
+separately. Furthermore, to normalize values we will divide by $n$. That is,
+we will use 
+\[ \frac 1 n \log|K+\sigma^2 I| + \frac 1 n y^T (K+\sigma^2{I})^{-1}y \]
+We begin with the first term. This term can be expressed in terms of the average
+eigenvalue 
+\[ \frac 1 n \sum_i (\lambda_i + \sigma^2 )\]
+However for any kernel with absolutely summable eigenvalues, as $n \to \infty$
+we find that this value goes to $\log(\sigma^2)$.
+
+Now we consider the second term, based on the Lipschitz property this approaches
+$\langle f, (K+\sigma^2)^{-1} f \rangle_{L_2(0,1)}$. Since only the second term
+is actually affected by our kernel hyperparamters this is the only term
+we need to optimize. Since we are using the negative log marginal likelihood,
+we wish to minimize this function. In the class of kernels with $k(x,x) \leq 1$
+eigenvalue must be less than or equal to $1$, so the minimizer is $K=I$.
+This minimizer is not absolutely summable, but notice that we can maintain
+absolute summability while still arbitrarily increasing eigenvalues, for
+example, we can take squared exponential with decreasing length scales. Thus,
+the problem of maximum likelhood estimation is not actually well-defined enough
+to be useful.
+
+\subsection{Caveats}
+One 
+
+\subsection{TODO}
+More considereations
+\begin{itemize}
+    \item Bayesian
+\end{itemize}

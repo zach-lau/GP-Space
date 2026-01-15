@@ -8,13 +8,14 @@ of GP. We begin with the problem setup. We have
     our Bayesian priors). We assume $x$ is drawn from some test distribution
     $x \sim p(x)$
     \item $y$ represents the results if we were to run the simulator at $x$
-    \item $y_T$ are our training points
+    \item $x_T$ are our training points
+    \item $y_T$ are the results of running the simulator at $x_T$
 \end{itemize}
 Furthermore, we assume a GP surrogate, that is \[ 
-    y_T, y | x, x_T \sim N(0, K_x)
+    y_T, y | x, x_T \sim N(0, K(x,x_T))
 \]
 For now, we assume that we are simply estimating kernel hyperparamters with
-MLEII, so that we are not in the fully Bayesian setting, but this can be easily
+type II MLE, so that we are not in the fully Bayesian setting, but this can be easily
 extended.
 
 The EPIG acquisition function is the given by the expected information gain over
@@ -23,12 +24,24 @@ some test distribution for x
     \EPIG(x_T) &= \E I(x, y; y_T | x_T) = \E[H[y|x]-H[y|x,x_T,y_T]] \\
     &= \E[I(y;y_T|x,x_T)]
 \end{align}
-Where the exectation involves both randomness in $x$, and in principle in 
-$y_T$. We thus wish to optimizea
-\[ \E \log|K + \sigma^2 I| \] 
-Where $K$ denotes the covariance matrix, which is dependent on the random variable
-$x$. To calculate this value we must take an expectation over $x$ which can be
-done by quadrature or monte carlo.
+Where the expectation is taken over $x$. We break down this information gain as
+follows 
+\begin{align}
+    I(y;y_T|x,x_T) = H(y|x,x_T)+H(y_T|x,x_T)-H(y,y_T|x,x_T)
+\end{align}
+In this expression, expectations are not taken over $x$. We analyze this term by
+term. The first term is independent of $x_T$ and so we can treat it as a
+constant. The second term is the entropy of a multivariate normal which gives us
+$\log |K(x_T)+\sigma^2 I|$. The final term is also the entropy of a multivariate normal
+giving $-\log|K(x,x_T)+\sigma^2 I|$. Taking expectations over $x$ we find
+\[ 
+    \EPIG(x) = \log|K(x_T) + \sigma^2 I| - \E\log|K(x,x_T) + \sigma^2 I|
+\]
+We see that we get two terms. The first term is our classical information gain
+term which drives diversity in training points. The second measures alignment
+with future inputs, and is maximized when our test point is close to training
+points.
+
 % \begin{align}
 %     I(y; y_T) &= H(y) + H(y_T) - H(y, y_T) \\
 % \end{align}
@@ -59,4 +72,5 @@ problems.
 \subsection{TODOs}
 \begin{itemize}
     \item Check that this formulation still satisfies submodularity
+    \item Problem with EPIG: discrete spaces - could get $-\infty$
 \end{itemize}

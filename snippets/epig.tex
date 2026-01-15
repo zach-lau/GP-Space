@@ -1,5 +1,6 @@
 \section{EPIG}
 \newcommand{\EPIG}{{\text{EPIG}}}
+\subsection{EPIG}
 We provide an expression for EPIG \cite{pmlr-v206-bickfordsmith23a} in the case
 of GP. We begin with the problem setup. We have
 \begin{itemize}
@@ -33,7 +34,8 @@ In this expression, expectations are not taken over $x$. We analyze this term by
 term. The first term is independent of $x_T$ and so we can treat it as a
 constant. The second term is the entropy of a multivariate normal which gives us
 $\log |K(x_T)+\sigma^2 I|$. The final term is also the entropy of a multivariate normal
-giving $-\log|K(x,x_T)+\sigma^2 I|$. Taking expectations over $x$ we find
+giving $-\log|K(x,x_T)+\sigma^2 I|$. Taking expectations over $x$ we find that
+up to affine transformation
 \[ 
     \EPIG(x) = \log|K(x_T) + \sigma^2 I| - \E\log|K(x,x_T) + \sigma^2 I|
 \]
@@ -64,7 +66,19 @@ points.
 % \[ 
 %     J(x_T) := \log|K_T| - \E\log|K_T'(x)|
 % \]
-
+\subsection{EPIG in the fully Bayesian context}
+In the Bayesian context, we have additional uncertainty associated with the
+hyperparamters $\theta$. In this case we modify the above derivation as
+follows. For brevity we omit the $x$ and $x_T$ in the notation
+\begin{itemize}
+    \item $H(y,y_T) = H(y,y_T|\theta)+H(\theta) = \E_\theta \log|K_\theta(x,x_T)+\sigma^2 I| + H(\theta)$
+    \item $H(y_T) = H(y_T|\theta)+H(\theta) = \E_\theta \log|K_\theta(x_T)+\sigma^2 I| + H(\theta)$ 
+\end{itemize}
+And thus 
+\[
+    \EPIG(x_T) &= \E_\theta \log|K_\theta(x_T)+\sigma^2 I| 
+    - \E_{x,\theta} \log|K_\theta(x,x_T)+\sigma^2 I|
+\]
 
 \subsection{Extending EPIG}
 EPIG might be extended by consideration of reduction uncertainty in inverse
